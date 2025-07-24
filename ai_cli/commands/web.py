@@ -144,8 +144,8 @@ def search(
             
             # Create results table
             table = Table(title=f"Search Results for: {query}")
-            table.add_column("Title", style="cyan", no_wrap=True)
-            table.add_column("URL", style="blue")
+            table.add_column("Title", style="cyan", no_wrap=True, width=40)
+            table.add_column("URL", style="blue", width=60)
             table.add_column("Snippet", style="white")
             
             for i, result in enumerate(results, 1):
@@ -323,10 +323,10 @@ def news(
             
             # Create news table
             table = Table(title=f"News Results: {topic or 'Latest News'}")
-            table.add_column("Title", style="cyan", no_wrap=True)
-            table.add_column("Source", style="blue")
-            table.add_column("Date", style="yellow")
-            table.add_column("URL", style="green")
+            table.add_column("Title", style="cyan", no_wrap=True, width=35)
+            table.add_column("Source", style="blue", width=15)
+            table.add_column("Date", style="yellow", width=12)
+            table.add_column("URL", style="green", width=60)
             table.add_column("Snippet", style="white")
             
             for i, result in enumerate(results, 1):
