@@ -150,12 +150,12 @@ def search(
             
             for i, result in enumerate(results, 1):
                 title = clean_text(result.get('title', ''), 60)
-                url = result.get('link', '')
+                url = result.get('href', '')  # Changed from 'link' to 'href'
                 snippet = clean_text(result.get('body', ''), 100)
                 
                 table.add_row(
                     f"{i}. {title}",
-                    url,
+                    url or "No URL",
                     snippet
                 )
             
@@ -319,18 +319,21 @@ def news(
             table.add_column("Title", style="cyan", no_wrap=True)
             table.add_column("Source", style="blue")
             table.add_column("Date", style="yellow")
+            table.add_column("URL", style="green")
             table.add_column("Snippet", style="white")
             
             for i, result in enumerate(results, 1):
                 title = clean_text(result.get('title', ''), 60)
                 source = result.get('source', 'Unknown')
                 date = result.get('date', 'Unknown')
+                url = result.get('url', '')  # Changed from 'href' to 'url'
                 snippet = clean_text(result.get('body', ''), 80)
                 
                 table.add_row(
                     f"{i}. {title}",
                     source,
                     date,
+                    url or "No URL",
                     snippet
                 )
             
