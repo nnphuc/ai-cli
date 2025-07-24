@@ -159,10 +159,18 @@ def search(
                     try:
                         from urllib.parse import urlparse
                         parsed = urlparse(url)
-                        display_url = f"{parsed.netloc}{parsed.path[:20]}{'...' if len(parsed.path) > 20 else ''}"
-                        clickable_url = f"[link={url}]{display_url}[/link]"
+                        # Show just the domain and first part of path, more compact
+                        path_part = parsed.path[:15] if len(parsed.path) > 15 else parsed.path
+                        display_url = f"{parsed.netloc}{path_part}{'...' if len(parsed.path) > 15 else ''}"
+                        # Make URL clearly clickable with blue color and underline
+                        clickable_url = f"[blue underline link={url}]{display_url}[/blue underline link={url}]"
                     except:
-                        clickable_url = f"[link={url}]{url[:40]}{'...' if len(url) > 40 else ''}[/link]"
+                        # Fallback: show just the domain or first 30 chars
+                        if '/' in url:
+                            domain = url.split('/')[2] if len(url.split('/')) > 2 else url[:30]
+                            clickable_url = f"[blue underline link={url}]{domain}...[/blue underline link={url}]"
+                        else:
+                            clickable_url = f"[blue underline link={url}]{url[:30]}{'...' if len(url) > 30 else ''}[/blue underline link={url}]"
                 else:
                     clickable_url = "No URL"
                 
@@ -348,10 +356,18 @@ def news(
                     try:
                         from urllib.parse import urlparse
                         parsed = urlparse(url)
-                        display_url = f"{parsed.netloc}{parsed.path[:20]}{'...' if len(parsed.path) > 20 else ''}"
-                        clickable_url = f"[link={url}]{display_url}[/link]"
+                        # Show just the domain and first part of path, more compact
+                        path_part = parsed.path[:15] if len(parsed.path) > 15 else parsed.path
+                        display_url = f"{parsed.netloc}{path_part}{'...' if len(parsed.path) > 15 else ''}"
+                        # Make URL clearly clickable with blue color and underline
+                        clickable_url = f"[blue underline link={url}]{display_url}[/blue underline link={url}]"
                     except:
-                        clickable_url = f"[link={url}]{url[:40]}{'...' if len(url) > 40 else ''}[/link]"
+                        # Fallback: show just the domain or first 30 chars
+                        if '/' in url:
+                            domain = url.split('/')[2] if len(url.split('/')) > 2 else url[:30]
+                            clickable_url = f"[blue underline link={url}]{domain}...[/blue underline link={url}]"
+                        else:
+                            clickable_url = f"[blue underline link={url}]{url[:30]}{'...' if len(url) > 30 else ''}[/blue underline link={url}]"
                 else:
                     clickable_url = "No URL"
                 
