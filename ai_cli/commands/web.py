@@ -159,18 +159,21 @@ def search(
                     try:
                         from urllib.parse import urlparse
                         parsed = urlparse(url)
-                        # Show just the domain and first part of path, more compact
-                        path_part = parsed.path[:15] if len(parsed.path) > 15 else parsed.path
-                        display_url = f"{parsed.netloc}{path_part}{'...' if len(parsed.path) > 15 else ''}"
+                        # Show domain and path, only add ellipsis if path is actually truncated
+                        if len(parsed.path) > 20:
+                            path_part = parsed.path[:20]
+                            display_url = f"{parsed.netloc}{path_part}..."
+                        else:
+                            display_url = f"{parsed.netloc}{parsed.path}"
                         # Make URL clearly clickable with blue color and underline
                         clickable_url = f"[blue underline link={url}]{display_url}[/blue underline link={url}]"
                     except:
-                        # Fallback: show just the domain or first 30 chars
+                        # Fallback: show just the domain or first 40 chars
                         if '/' in url:
-                            domain = url.split('/')[2] if len(url.split('/')) > 2 else url[:30]
-                            clickable_url = f"[blue underline link={url}]{domain}...[/blue underline link={url}]"
+                            domain = url.split('/')[2] if len(url.split('/')) > 2 else url[:40]
+                            clickable_url = f"[blue underline link={url}]{domain}[/blue underline link={url}]"
                         else:
-                            clickable_url = f"[blue underline link={url}]{url[:30]}{'...' if len(url) > 30 else ''}[/blue underline link={url}]"
+                            clickable_url = f"[blue underline link={url}]{url[:40]}[/blue underline link={url}]"
                 else:
                     clickable_url = "No URL"
                 
@@ -356,18 +359,21 @@ def news(
                     try:
                         from urllib.parse import urlparse
                         parsed = urlparse(url)
-                        # Show just the domain and first part of path, more compact
-                        path_part = parsed.path[:15] if len(parsed.path) > 15 else parsed.path
-                        display_url = f"{parsed.netloc}{path_part}{'...' if len(parsed.path) > 15 else ''}"
+                        # Show domain and path, only add ellipsis if path is actually truncated
+                        if len(parsed.path) > 20:
+                            path_part = parsed.path[:20]
+                            display_url = f"{parsed.netloc}{path_part}..."
+                        else:
+                            display_url = f"{parsed.netloc}{parsed.path}"
                         # Make URL clearly clickable with blue color and underline
                         clickable_url = f"[blue underline link={url}]{display_url}[/blue underline link={url}]"
                     except:
-                        # Fallback: show just the domain or first 30 chars
+                        # Fallback: show just the domain or first 40 chars
                         if '/' in url:
-                            domain = url.split('/')[2] if len(url.split('/')) > 2 else url[:30]
-                            clickable_url = f"[blue underline link={url}]{domain}...[/blue underline link={url}]"
+                            domain = url.split('/')[2] if len(url.split('/')) > 2 else url[:40]
+                            clickable_url = f"[blue underline link={url}]{domain}[/blue underline link={url}]"
                         else:
-                            clickable_url = f"[blue underline link={url}]{url[:30]}{'...' if len(url) > 30 else ''}[/blue underline link={url}]"
+                            clickable_url = f"[blue underline link={url}]{url[:40]}[/blue underline link={url}]"
                 else:
                     clickable_url = "No URL"
                 
