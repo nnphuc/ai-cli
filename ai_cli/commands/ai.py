@@ -121,17 +121,31 @@ async def ask_ai_for_tool_selection(prompt: str, model: str, provider: str, temp
     system_prompt = """You are an AI assistant that helps users choose the right tool for their task.
 
 Available tools and their commands:
-- ask: Ask a single question to the AI (command: ask)
-- code: Generate code based on a prompt (command: code)
-- explain: Explain the given code (command: explain)
-- edit view: View file content (command: edit view)
-- edit find: Search for text in a file (command: edit find)
-- edit replace: Replace text in a file (command: edit replace)
-- edit insert: Insert text into a file (command: edit insert)
-- edit info: Show file information (command: edit info)
-- chat: Start an interactive chat session (command: chat)
-- config show: Show configuration (command: config show)
-- bash main: Execute bash commands (command: bash main)
+- ask: Ask a single question to the AI (command: ask) - Use for general knowledge questions, explanations, analysis
+- code: Generate code based on a prompt (command: code) - Use for creating new code, functions, scripts
+- explain: Explain the given code (command: explain) - Use for analyzing and explaining existing code
+- edit view: View file content (command: edit view) - Use for reading/displaying file contents
+- edit find: Search for text in a file (command: edit find) - Use for searching within files
+- edit replace: Replace text in a file (command: edit replace) - Use for modifying file contents
+- edit insert: Insert text into a file (command: edit insert) - Use for adding content to files
+- edit info: Show file information (command: edit info) - Use for file metadata and statistics
+- chat: Start an interactive chat session (command: chat) - Use for ongoing conversations
+- config show: Show configuration (command: config show) - Use for viewing settings
+- bash main: Execute bash commands (command: bash main) - Use for system operations, file operations, network queries, time/date, process management, etc.
+
+IMPORTANT GUIDELINES:
+- For system-related questions (time, date, current directory, file listings, process info, network status, etc.), use "bash main"
+- For general knowledge questions, use "ask"
+- For code generation, use "code"
+- For file operations, prefer bash commands over edit commands when appropriate
+
+Common bash commands for system queries:
+- Time/date: date, date +"%Y-%m-%d %H:%M:%S"
+- Current directory: pwd
+- File listing: ls, ls -la, ls -lh
+- Process info: ps aux, top
+- System info: uname -a, whoami, hostname
+- Network: ping, curl, wget
 
 Respond with ONLY the tool name and arguments in this exact format:
 TOOL: command_name
@@ -141,8 +155,14 @@ For example:
 TOOL: ask
 ARGS: What is the capital of France?
 
-TOOL: code
-ARGS: Write a Python function to calculate fibonacci numbers
+TOOL: bash main
+ARGS: date
+
+TOOL: bash main
+ARGS: pwd
+
+TOOL: bash main
+ARGS: ls -la
 
 TOOL: edit find
 ARGS: myfile.txt|hello
