@@ -153,9 +153,22 @@ def search(
                 url = result.get('href', '')  # Changed from 'link' to 'href'
                 snippet = clean_text(result.get('body', ''), 100)
                 
+                # Create a clickable URL display
+                if url:
+                    # Extract domain for display
+                    try:
+                        from urllib.parse import urlparse
+                        parsed = urlparse(url)
+                        display_url = f"{parsed.netloc}{parsed.path[:20]}{'...' if len(parsed.path) > 20 else ''}"
+                        clickable_url = f"[link={url}]{display_url}[/link]"
+                    except:
+                        clickable_url = f"[link={url}]{url[:40]}{'...' if len(url) > 40 else ''}[/link]"
+                else:
+                    clickable_url = "No URL"
+                
                 table.add_row(
                     f"{i}. {title}",
-                    url or "No URL",
+                    clickable_url,
                     snippet
                 )
             
@@ -329,11 +342,24 @@ def news(
                 url = result.get('url', '')  # Changed from 'href' to 'url'
                 snippet = clean_text(result.get('body', ''), 80)
                 
+                # Create a clickable URL display
+                if url:
+                    # Extract domain for display
+                    try:
+                        from urllib.parse import urlparse
+                        parsed = urlparse(url)
+                        display_url = f"{parsed.netloc}{parsed.path[:20]}{'...' if len(parsed.path) > 20 else ''}"
+                        clickable_url = f"[link={url}]{display_url}[/link]"
+                    except:
+                        clickable_url = f"[link={url}]{url[:40]}{'...' if len(url) > 40 else ''}[/link]"
+                else:
+                    clickable_url = "No URL"
+                
                 table.add_row(
                     f"{i}. {title}",
                     source,
                     date,
-                    url or "No URL",
+                    clickable_url,
                     snippet
                 )
             
