@@ -7,8 +7,7 @@ import typer
 from rich.console import Console
 from rich.traceback import install
 
-from .commands import ask, chat, code, config, edit, explain, bash, ai
-from .commands.ai_langgraph import main as ai_langgraph_main
+from .commands import ask, chat, code, config, edit, explain, bash
 from .core.config import Config
 
 # Install rich traceback handler
@@ -54,12 +53,13 @@ def main(
         console.print("[dim]Verbose mode enabled[/dim]")
 
 
-# Add commands directly
+
+
+# Add other commands
 app.command("chat")(chat.start)
 app.command("ask")(ask.main)
 app.command("code")(code.main)
 app.command("explain")(explain.main)
-app.command("ai")(ai_langgraph_main)
 app.add_typer(bash.app, name="bash", help="Execute bash commands")
 app.add_typer(edit.app, name="edit", help="Edit text files")
 app.add_typer(config.app, name="config", help="Manage configuration settings")
@@ -68,7 +68,47 @@ app.add_typer(config.app, name="config", help="Manage configuration settings")
 def main_cli() -> None:
     """Main CLI function."""
     try:
-        app()
+        # Check if arguments are provided and if the first argument is not a known command
+        import sys
+        args = sys.argv[1:] if len(sys.argv) > 1 else []
+        
+        # Known commands that should not be treated as AI prompts
+        known_commands = {
+            "chat", "ask", "code", "explain", "bash", "edit", "config", 
+            "--help", "-h", "--version", "-v", "--verbose"
+        }
+        
+        # If first argument is not a known command and not an option, treat as AI prompt
+        if args and not args[0].startswith("-") and args[0] not in known_commands:
+            # Treat as AI prompt
+            from .commands.ai_langgraph import main as ai_main
+            # Parse remaining arguments for options
+            import argparse
+            parser = argparse.ArgumentParser()
+            parser.add_argument("--model", "-m")
+            parser.add_argument("--provider", "-p")
+            parser.add_argument("--temperature", "-t", type=float)
+            parser.add_argument("--verbose", action="store_true")
+            parser.add_argument("--force-tool")
+            
+            # Extract the prompt and remaining args
+            prompt = args[0]
+            remaining_args = args[1:]
+            
+            # Parse options
+            parsed_args, _ = parser.parse_known_args(remaining_args)
+            
+            ai_main(
+                prompt=prompt,
+                model=parsed_args.model,
+                provider=parsed_args.provider,
+                temperature=parsed_args.temperature,
+                verbose=parsed_args.verbose,
+                force_tool=parsed_args.force_tool
+            )
+        else:
+            # Normal command execution
+            app()
     except KeyboardInterrupt:
         console.print("\n[yellow]Interrupted by user[/yellow]")
         sys.exit(1)
