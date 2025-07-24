@@ -113,12 +113,16 @@ def parse_prompt(prompt: str) -> Tuple[str, List[str], float]:
     return best_match, best_args, best_confidence
 
 
-async def ask_ai_for_tool_selection(prompt: str, model: str, provider: str, temperature: float) -> Tuple[str, List[str]]:
+async def ask_ai_for_tool_selection(prompt: str, model: str, provider: str, temperature: float, verbose: bool = False) -> Tuple[str, List[str]]:
     """
     Ask the AI to help determine which tool to use for the given prompt.
     Returns (tool_name, args)
     """
     system_prompt = """You are an AI assistant that helps users choose the right tool for their task.
+
+CRITICAL: When using bash commands with pipes (|), include the pipe symbol in the command.
+Examples: "netstat -an | grep LISTEN", "lsof -i -P | grep LISTEN"
+For network port queries, use: "netstat -an | grep LISTEN"
 
 Available tools and their commands:
 - ask: Ask a single question to the AI (command: ask) - Use for general knowledge questions, explanations, analysis
@@ -136,6 +140,7 @@ Available tools and their commands:
 IMPORTANT GUIDELINES:
 - For system-related questions (time, date, current directory, file listings, process info, network status, etc.), use "bash main"
 - For date calculations, use "bash main" with appropriate date command for the OS
+- For network port queries, use "bash main" with commands like "netstat -an | grep LISTEN"
 - For general knowledge questions, use "ask"
 - For code generation, use "code"
 - For file operations, prefer bash commands over edit commands when appropriate
@@ -149,8 +154,11 @@ Common bash commands for system queries:
 - Process info: ps aux, top
 - System info: uname -a, whoami, hostname
 - Network: ping, curl, wget
+- Network ports: netstat -an | grep LISTEN, lsof -i -P | grep LISTEN
 
 NOTE: This system appears to be macOS, so use macOS date syntax (-v flag) for date calculations.
+NOTE: For complex commands with pipes (|), use the full command as a single argument.
+IMPORTANT: When using pipes, include the pipe symbol (|) in the command.
 
 Respond with ONLY the tool name and arguments in this exact format:
 TOOL: command_name
@@ -175,13 +183,24 @@ ARGS: pwd
 TOOL: bash main
 ARGS: ls -la
 
+TOOL: bash main
+ARGS: netstat -an | grep LISTEN
+
+TOOL: bash main
+ARGS: lsof -i -P | grep LISTEN
+
+TOOL: bash main
+ARGS: ps aux | grep python
+
 TOOL: edit find
 ARGS: myfile.txt|hello
 
 TOOL: config show
 ARGS: 
 
-IMPORTANT: Use the command name (not the tool description) and do not include quotes around arguments."""
+IMPORTANT: Use the command name (not the tool description) and do not include quotes around arguments.
+For complex commands with pipes or multiple arguments, put the entire command as a single argument.
+CRITICAL: When using grep with pipes, include the pipe symbol (|) in the command, like: netstat -an | grep LISTEN"""
 
     try:
         client = get_client(provider)
@@ -199,6 +218,8 @@ IMPORTANT: Use the command name (not the tool description) and do not include qu
         
         # Parse the AI response
         content = response.content.strip()
+        if verbose:
+            console.print(f"[dim]AI response: {content}[/dim]")
         tool_match = re.search(r"TOOL:\s*([^\n]+)", content)
         args_match = re.search(r"ARGS:\s*(.*)", content)
         
@@ -207,9 +228,15 @@ IMPORTANT: Use the command name (not the tool description) and do not include qu
             # Remove "ARGS" from tool name if present (handle newlines)
             tool_name = tool_name.replace(" ARGS", "").replace("\nARGS", "").strip()
             args_str = args_match.group(1).strip()
-            # Remove quotes and split by |
+            # Remove quotes
             args_str = args_str.strip('"\'')
-            args = [arg.strip().strip('"\'') for arg in args_str.split('|') if arg.strip()]
+            
+            # For bash commands, don't split by | as it's part of the command
+            if tool_name == "bash main":
+                args = [args_str]
+            else:
+                # For other commands, split by | as separator
+                args = [arg.strip().strip('"\'') for arg in args_str.split('|') if arg.strip()]
             
             # Find the tool by command name and return the actual command
             for key, tool_info in TOOLS.items():
@@ -308,7 +335,7 @@ def main(
         else:
             # Ask AI for tool selection
             console.print("[dim]Pattern matching uncertain, asking AI for tool selection...[/dim]")
-            tool_name, args = asyncio.run(ask_ai_for_tool_selection(prompt, model, provider, temperature))
+            tool_name, args = asyncio.run(ask_ai_for_tool_selection(prompt, model, provider, temperature, verbose))
             console.print(f"[green]AI selected: {tool_name}[/green]")
     
     if not tool_name:
