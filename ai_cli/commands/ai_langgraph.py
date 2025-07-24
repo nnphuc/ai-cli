@@ -193,14 +193,35 @@ CRITICAL: When using grep with pipes, include the pipe symbol (|) in the command
             
             # Parse the response
             tool_match = re.search(r"TOOL:\s*([^\n]+)", content)
-            args_match = re.search(r"ARGS:\s*(.*?)(?:\n|$)", content)
+            
+            # Handle empty ARGS case
+            if "ARGS: \nREASONING:" in content:
+                args_match = True
+                args_str = ""
+            elif "ARGS:\nREASONING:" in content:
+                args_match = True
+                args_str = ""
+            else:
+                args_match = re.search(r"ARGS:\s*(.*?)(?:\nREASONING:|$)", content, re.DOTALL)
+            
             reasoning_match = re.search(r"REASONING:\s*(.*?)(?:\n|$)", content)
+            
+            if state["verbose"]:
+                console.print(f"[dim]Parsed tool: {tool_match.group(1) if tool_match else 'None'}[/dim]")
+                if isinstance(args_match, bool):
+                    console.print(f"[dim]Parsed args: {args_str if 'args_str' in locals() else 'None'}[/dim]")
+                else:
+                    console.print(f"[dim]Parsed args: {args_match.group(1) if args_match else 'None'}[/dim]")
+                console.print(f"[dim]Parsed reasoning: {reasoning_match.group(1) if reasoning_match else 'None'}[/dim]")
             
             if tool_match and args_match:
                 tool_name = tool_match.group(1).strip()
                 tool_name = tool_name.replace(" ARGS", "").replace("\nARGS", "").strip()
-                args_str = args_match.group(1).strip()
-                args_str = args_str.strip('"\'')
+                
+                # Handle the case where we already extracted args_str
+                if 'args_str' not in locals():
+                    args_str = args_match.group(1).strip()
+                    args_str = args_str.strip('"\'')
                 
                 # For bash commands, don't split by | as it's part of the command
                 if tool_name == "bash main":
