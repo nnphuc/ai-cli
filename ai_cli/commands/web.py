@@ -155,25 +155,8 @@ def search(
                 
                 # Create a clickable URL display
                 if url:
-                    # Extract domain for display
-                    try:
-                        from urllib.parse import urlparse
-                        parsed = urlparse(url)
-                        # Show domain and path, only add ellipsis if path is actually truncated
-                        if len(parsed.path) > 20:
-                            path_part = parsed.path[:20]
-                            display_url = f"{parsed.netloc}{path_part}..."
-                        else:
-                            display_url = f"{parsed.netloc}{parsed.path}"
-                        # Make URL clearly clickable with blue color and underline
-                        clickable_url = f"[blue underline link={url}]{display_url}[/blue underline link={url}]"
-                    except:
-                        # Fallback: show just the domain or first 40 chars
-                        if '/' in url:
-                            domain = url.split('/')[2] if len(url.split('/')) > 2 else url[:40]
-                            clickable_url = f"[blue underline link={url}]{domain}[/blue underline link={url}]"
-                        else:
-                            clickable_url = f"[blue underline link={url}]{url[:40]}[/blue underline link={url}]"
+                    # Make URL clearly clickable with blue color and underline
+                    clickable_url = f"[blue underline link={url}]{url}[/blue underline link={url}]"
                 else:
                     clickable_url = "No URL"
                 
@@ -355,25 +338,8 @@ def news(
                 
                 # Create a clickable URL display
                 if url:
-                    # Extract domain for display
-                    try:
-                        from urllib.parse import urlparse
-                        parsed = urlparse(url)
-                        # Show domain and path, only add ellipsis if path is actually truncated
-                        if len(parsed.path) > 20:
-                            path_part = parsed.path[:20]
-                            display_url = f"{parsed.netloc}{path_part}..."
-                        else:
-                            display_url = f"{parsed.netloc}{parsed.path}"
-                        # Make URL clearly clickable with blue color and underline
-                        clickable_url = f"[blue underline link={url}]{display_url}[/blue underline link={url}]"
-                    except:
-                        # Fallback: show just the domain or first 40 chars
-                        if '/' in url:
-                            domain = url.split('/')[2] if len(url.split('/')) > 2 else url[:40]
-                            clickable_url = f"[blue underline link={url}]{domain}[/blue underline link={url}]"
-                        else:
-                            clickable_url = f"[blue underline link={url}]{url[:40]}[/blue underline link={url}]"
+                    # Make URL clearly clickable with blue color and underline
+                    clickable_url = f"[blue underline link={url}]{url}[/blue underline link={url}]"
                 else:
                     clickable_url = "No URL"
                 
