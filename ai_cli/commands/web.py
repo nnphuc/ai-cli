@@ -151,7 +151,7 @@ def search(
             for i, result in enumerate(results, 1):
                 title = clean_text(result.get('title', ''), 60)
                 url = result.get('href', '')  # Changed from 'link' to 'href'
-                snippet = clean_text(result.get('body', ''), 100)
+                snippet = result.get('body', '')
                 
                 # Create a clickable URL display
                 if url:
@@ -351,7 +351,7 @@ def news(
                 source = result.get('source', 'Unknown')
                 date = result.get('date', 'Unknown')
                 url = result.get('url', '')  # Changed from 'href' to 'url'
-                snippet = clean_text(result.get('body', ''), 80)
+                snippet = result.get('body', '')
                 
                 # Create a clickable URL display
                 if url:
