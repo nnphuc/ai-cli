@@ -16,158 +16,71 @@ app = typer.Typer(name="ai", help="AI-powered command that decides which tool to
 
 console = Console()
 
-# Tool definitions with descriptions and patterns
+# Tool definitions with descriptions
 TOOLS = {
     "ask": {
         "description": "Ask a single question to the AI",
-        "patterns": [
-            r"ask\s+(.+)$",
-            r"what\s+(.+)$",
-            r"how\s+(.+)$",
-            r"why\s+(.+)$",
-            r"when\s+(.+)$",
-            r"where\s+(.+)$",
-            r"who\s+(.+)$",
-            r"question[:\s]+(.+)$",
-            r"tell\s+me\s+(.+)$",
-            r"explain\s+(.+)$",
-        ],
+        "patterns": [],
         "command": "ask",
         "args": ["question"]
     },
     "code": {
         "description": "Generate code based on a prompt",
-        "patterns": [
-            r"generate\s+code\s+(.+)$",
-            r"write\s+code\s+(.+)$",
-            r"create\s+code\s+(.+)$",
-            r"code\s+(.+)$",
-            r"program\s+(.+)$",
-            r"function\s+(.+)$",
-            r"class\s+(.+)$",
-            r"script\s+(.+)$",
-            r"algorithm\s+(.+)$",
-            r"implement\s+(.+)$",
-        ],
+        "patterns": [],
         "command": "code",
         "args": ["prompt"]
     },
     "explain": {
         "description": "Explain the given code",
-        "patterns": [
-            r"explain\s+code\s+(.+)$",
-            r"what\s+does\s+this\s+code\s+do[:\s]+(.+)$",
-            r"how\s+does\s+this\s+work[:\s]+(.+)$",
-            r"break\s+down\s+this\s+code[:\s]+(.+)$",
-            r"analyze\s+this\s+code[:\s]+(.+)$",
-            r"understand\s+this\s+code[:\s]+(.+)$",
-            r"code\s+explanation[:\s]+(.+)$",
-        ],
+        "patterns": [],
         "command": "explain",
         "args": ["code"]
     },
     "edit_view": {
         "description": "View file content",
-        "patterns": [
-            r"view\s+file\s+(.+)$",
-            r"show\s+file\s+(.+)$",
-            r"display\s+file\s+(.+)$",
-            r"read\s+file\s+(.+)$",
-            r"open\s+file\s+(.+)$",
-            r"cat\s+(.+)$",
-            r"file\s+content[:\s]+(.+)$",
-            r"view\s+(.+)$",
-        ],
+        "patterns": [],
         "command": "edit view",
         "args": ["file_path"]
     },
     "edit_find": {
         "description": "Search for text in a file",
-        "patterns": [
-            r"find\s+(.+?)\s+in\s+(.+)$",
-            r"search\s+(.+?)\s+in\s+(.+)$",
-            r"grep\s+(.+?)\s+in\s+(.+)$",
-            r"look\s+for\s+(.+?)\s+in\s+(.+)$",
-            r"file\s+search[:\s]+(.+?)\s+in\s+(.+)$",
-        ],
+        "patterns": [],
         "command": "edit find",
         "args": ["file_path", "pattern"]
     },
     "edit_replace": {
         "description": "Replace text in a file",
-        "patterns": [
-            r"replace\s+(.+?)\s+with\s+(.+?)\s+in\s+(.+)$",
-            r"change\s+(.+?)\s+to\s+(.+?)\s+in\s+(.+)$",
-            r"substitute\s+(.+?)\s+with\s+(.+?)\s+in\s+(.+)$",
-            r"edit\s+file[:\s]+(.+?)\s+->\s+(.+?)\s+in\s+(.+)$",
-        ],
+        "patterns": [],
         "command": "edit replace",
         "args": ["file_path", "pattern", "replacement"]
     },
     "edit_insert": {
         "description": "Insert text into a file",
-        "patterns": [
-            r"insert\s+(.+?)\s+into\s+(.+)$",
-            r"add\s+(.+?)\s+to\s+(.+)$",
-            r"append\s+(.+?)\s+to\s+(.+)$",
-            r"put\s+(.+?)\s+in\s+(.+)$",
-        ],
+        "patterns": [],
         "command": "edit insert",
         "args": ["file_path", "content"]
     },
     "edit_info": {
         "description": "Show file information",
-        "patterns": [
-            r"file\s+info[:\s]+(.+)$",
-            r"info\s+about\s+file\s+(.+)$",
-            r"file\s+stats[:\s]+(.+)$",
-            r"file\s+details[:\s]+(.+)$",
-            r"analyze\s+file\s+(.+)$",
-        ],
+        "patterns": [],
         "command": "edit info",
         "args": ["file_path"]
     },
     "chat": {
         "description": "Start an interactive chat session",
-        "patterns": [
-            r"chat\s*$",
-            r"start\s+chat\s*$",
-            r"conversation\s*$",
-            r"talk\s*$",
-            r"interactive\s*$",
-        ],
+        "patterns": [],
         "command": "chat",
         "args": []
     },
     "config_show": {
         "description": "Show configuration",
-        "patterns": [
-            r"config\s*$",
-            r"settings\s*$",
-            r"configuration\s*$",
-            r"show\s+config\s*$",
-            r"current\s+settings\s*$",
-            r"show\s+configuration\s*$",
-            r"display\s+config\s*$",
-            r"display\s+settings\s*$",
-        ],
+        "patterns": [],
         "command": "config show",
         "args": []
     },
     "bash": {
         "description": "Execute bash commands",
-        "patterns": [
-            r"run\s+(.+)$",
-            r"execute\s+(.+)$",
-            r"bash\s+(.+)$",
-            r"shell\s+(.+)$",
-            r"command\s+(.+)$",
-            r"terminal\s+(.+)$",
-            r"cmd\s+(.+)$",
-            r"ls\s+(.+)$",
-            r"pwd\s*$",
-            r"echo\s+(.+)$",
-        ],
+        "patterns": [],
         "command": "bash main",
         "args": ["command"]
     }
