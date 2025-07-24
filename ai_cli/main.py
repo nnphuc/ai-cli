@@ -7,7 +7,8 @@ import typer
 from rich.console import Console
 from rich.traceback import install
 
-from .commands import ask, chat, code, config, edit, explain, ai, bash
+from .commands import ask, chat, code, config, edit, explain, bash, ai
+from .commands.ai_langgraph import main as ai_langgraph_main
 from .core.config import Config
 
 # Install rich traceback handler
@@ -58,7 +59,7 @@ app.command("chat")(chat.start)
 app.command("ask")(ask.main)
 app.command("code")(code.main)
 app.command("explain")(explain.main)
-app.command("ai")(ai.main)
+app.command("ai")(ai_langgraph_main)
 app.add_typer(bash.app, name="bash", help="Execute bash commands")
 app.add_typer(edit.app, name="edit", help="Edit text files")
 app.add_typer(config.app, name="config", help="Manage configuration settings")
