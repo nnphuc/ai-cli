@@ -135,17 +135,22 @@ Available tools and their commands:
 
 IMPORTANT GUIDELINES:
 - For system-related questions (time, date, current directory, file listings, process info, network status, etc.), use "bash main"
+- For date calculations, use "bash main" with appropriate date command for the OS
 - For general knowledge questions, use "ask"
 - For code generation, use "code"
 - For file operations, prefer bash commands over edit commands when appropriate
 
 Common bash commands for system queries:
 - Time/date: date, date +"%Y-%m-%d %H:%M:%S"
+- Date calculations (macOS): date -v+1d (tomorrow), date -v+1w (next week), date -v+1m (next month), date -v+32d (32 days from now)
+- Date calculations (Linux): date -d "tomorrow", date -d "next week", date -d "next month"
 - Current directory: pwd
 - File listing: ls, ls -la, ls -lh
 - Process info: ps aux, top
 - System info: uname -a, whoami, hostname
 - Network: ping, curl, wget
+
+NOTE: This system appears to be macOS, so use macOS date syntax (-v flag) for date calculations.
 
 Respond with ONLY the tool name and arguments in this exact format:
 TOOL: command_name
@@ -157,6 +162,12 @@ ARGS: What is the capital of France?
 
 TOOL: bash main
 ARGS: date
+
+TOOL: bash main
+ARGS: date -v+1d
+
+TOOL: bash main
+ARGS: date -v+32d
 
 TOOL: bash main
 ARGS: pwd
